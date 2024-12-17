@@ -2,12 +2,21 @@ import ErrorResponse from "../errors/ErrorResponse.js";
 import UserRepository from "../repositories/user.repository.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+import Account from "../models/Account.js";
+
 import { StatusCodes } from "http-status-codes";
 
 const userRepository = new UserRepository();
 
 const register = asyncHandler(async (req, res, next) => {
   const user = await userRepository.create(req.body);
+
+  const balance = Math.floor(Math.random() * 10000) + 1;
+
+  const account = await Account.create({
+    userId: user._id,
+    balance,
+  });
 
   const token = user.getJwtToken();
 

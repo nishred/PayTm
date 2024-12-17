@@ -7,6 +7,7 @@ import connectToDb from "./config/db.config.js";
 import apiRouter from "./routes/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import User from "./models/User.js";
+import Account from "./models/Account.js";
 
 const app = express();
 

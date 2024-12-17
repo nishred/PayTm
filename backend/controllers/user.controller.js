@@ -65,14 +65,30 @@ const updateUser = asyncHandler(async (req, res, next) => {
 });
 
 const getAllUsers = asyncHandler(async (req, res, next) => {
-  const data = await userRepository.getAll(req.query);
+
+    console.log("get all users",req.query)
+  const users = await userRepository.getAll(req.query.filter,req.userId);
 
   res.status(StatusCodes.OK).json({
     success: true,
     message: "Retrived all users successfully",
 
-    data,
+    data: { users },
   });
 });
 
-export { register, signIn, updateUser, getAllUsers };
+const getProfile = asyncHandler(async (req, res, next) => {
+  const user = await userRepository.getById(req.userId);
+
+  if (!user)
+    throw new ErrorResponse("User doesn't exist", StatusCodes.NOT_FOUND);
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: "Profile retrieved successfully",
+
+    data: { user },
+  });
+});
+
+export { register, signIn, updateUser, getAllUsers, getProfile };

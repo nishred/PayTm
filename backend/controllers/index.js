@@ -3,6 +3,7 @@ import {
   signIn,
   updateUser,
   getAllUsers,
+  getProfile
 } from "./user.controller.js";
 
 import { fetchBalance,transferBalance } from "./account.controller.js";
@@ -12,6 +13,7 @@ export const UserController = {
   signIn,
   updateUser,
   getAllUsers,
+  getProfile
 };
 
 export const AccountController = {

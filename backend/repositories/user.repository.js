@@ -28,105 +28,26 @@ class UserRepository {
     return user;
   }
 
-  async getAll(queryParams) {
-    let queryCpy = { ...queryParams };
-
-    const queries = ["select", "sort", "page", "limit"];
-
-    Object.keys(queryCpy).forEach((key) => {
-      if (queries.includes(key)) {
-        delete queryCpy[key];
-      }
+  async getAll(filter, userId) {
+    const users = await this.model.find({
+      $or: [
+        { username: { $regex: filter } },
+        { firstName: { $regex: filter } },
+        { lastName: { $regex: filter } },
+      ],
     });
 
-    let query;
+    console.log("comparision");
 
-    let countQuery;
+    const filteredUsers = users.filter((user) => user._id.toString() !== userId);
 
-    query = this.model.find(queryCpy);
+    return filteredUsers;
+  }
 
-     countQuery = this.model.find(queryCpy);
+  async getById(userId) {
+    const user = await this.model.findById(userId);
 
-    if (queryParams["sort"]) {
-      const sortKeys = queryParams["sort"].split(",");
-
-      let sortObj = {};
-
-      sortKeys.forEach((key) => {
-        if (key.startsWith("-")) {
-          sortObj[key.substring(1)] = -1;
-        } else {
-          sortObj[key] = 1;
-        }
-      });
-
-      query = query.sort(sortObj);
-
-      countQuery = countQuery.sort(sortObj)
-    }
-
-    let page = queryParams["page"] ? parseInt(queryParams["page"]) : 1;
-
-    let limit = queryParams["limit"] ? parseInt(queryParams["limit"]) : 20;
-
-    let pagination = {};
-
-    let totalDocuments = await countQuery.countDocuments();
-
-    let skipDocuments = (page - 1) * limit;
-
-    let nextDocuments = totalDocuments - skipDocuments;
-
-    let totalPages = Math.ceil(totalDocuments / limit);
-
-    if (nextDocuments > 0) {
-      let current = {
-        page,
-        size: Math.min(nextDocuments, limit),
-      };
-
-      pagination.current = current;
-    }
-
-    let leftDocuments = nextDocuments - limit;
-
-    if (leftDocuments > 0) {
-      let next = {
-        page: page + 1,
-        size: Math.min(limit, leftDocuments),
-      };
-
-      pagination.next = next;
-    }
-
-    //prev page
-
-    if (pagination.current?.size > 0) {
-      if (page > 1) {
-        let prev = {
-          page: page - 1,
-          size: limit,
-        };
-
-        pagination.prev = prev;
-      }
-    }
-
-    if (queryParams["select"]) {
-      let selectStr = queryParams["select"].split(",").join(" ");
-
-      query = query.select(selectStr);
-    }
-
-    let users = await query;
-
-    return {
-      count: Math.max(0, nextDocuments),
-
-      pagination,
-
-      users,
-    };
+    return user;
   }
 }
 

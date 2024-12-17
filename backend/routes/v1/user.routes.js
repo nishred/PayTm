@@ -20,4 +20,6 @@ userRouter.put("/", auth, UserController.updateUser);
 
 userRouter.get("/bulk", auth, UserController.getAllUsers);
 
+userRouter.get("/", auth, UserController.getProfile);
+
 export default userRouter;

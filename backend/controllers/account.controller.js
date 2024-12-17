@@ -18,17 +18,21 @@ const fetchBalance = asyncHandler(async (req, res, next) => {
 });
 
 const transferBalance = asyncHandler(async (req, res, next) => {
-  const { to, balance } = req.body;
+  let { to, amount: balance } = req.body;
+
+  console.log("body", req.body);
+
+  balance = Number(balance);
 
   const session = await mongoose.startSession();
 
   try {
+    session.startTransaction();
 
-    session.startTransaction()
-     
     const fromAccount = await Account.findOne({ userId: req.userId });
 
     const toAccount = await Account.findOne({ userId: to });
+
 
     if (fromAccount.balance >= balance) {
       fromAccount.balance -= balance;
@@ -39,7 +43,7 @@ const transferBalance = asyncHandler(async (req, res, next) => {
 
       await toAccount.save({ session });
     } else {
-      throw new ErrorResponse("Insufficient balance",StatusCodes.BAD_REQUEST);
+      throw new ErrorResponse("Insufficient balance", StatusCodes.BAD_REQUEST);
     }
 
     await session.commitTransaction();

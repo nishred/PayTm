@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import BottomWarning from "../components/BottomWarning";
 import Button from "../components/Button";
 import Heading from "../components/Heading";
@@ -7,12 +7,15 @@ import SubHeading from "../components/SubHeading";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContextProvider";
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  const { setUser } = React.useContext(UserContext);
 
   return (
     <div className="bg-slate-300 h-screen flex justify-center">
@@ -45,6 +48,15 @@ const SignIn = () => {
                     password,
                   }
                 );
+
+                const { user } = response.data;
+
+                setUser({
+                  email: user.username,
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                  isAuthenticated: true,
+                });
 
                 localStorage.setItem("token", response.data.data.token);
 

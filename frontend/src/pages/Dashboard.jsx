@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import useToken from "../hooks/useToken";
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
 
   const [balance, setBalance] = useState("");
 
@@ -17,28 +16,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const token = useToken();
-
-  useEffect(() => {
-    if (!token) return;
-
-    console.log("fetching profile");
-
-    async function fetchProfile() {
-      setIsLoading(true);
-
-      const response = await axios.get("http://localhost:5001/api/v1/users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setUser(response.data.data.user);
-
-      setIsLoading(false);
-    }
-
-    fetchProfile();
-  }, [token]);
 
   useEffect(() => {
     if (!token) return;
@@ -71,7 +48,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <Appbar user={user.firstName}/>
+      <Appbar/>
       <div className="m-8">
         <Balance value={balance} />
         <Users />

@@ -51,7 +51,14 @@ const signIn = asyncHandler(async (req, res, next) => {
     success: true,
     message: "Login successfull",
 
-    data: { token },
+    data: {
+      token,
+      user: {
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    },
   });
 });
 
@@ -65,9 +72,8 @@ const updateUser = asyncHandler(async (req, res, next) => {
 });
 
 const getAllUsers = asyncHandler(async (req, res, next) => {
-
-    console.log("get all users",req.query)
-  const users = await userRepository.getAll(req.query.filter,req.userId);
+  console.log("get all users", req.query);
+  const users = await userRepository.getAll(req.query.filter, req.userId);
 
   res.status(StatusCodes.OK).json({
     success: true,

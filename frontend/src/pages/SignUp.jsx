@@ -1,4 +1,5 @@
 import { useState } from "react";
+import React from "react";
 import BottomWarning from "../components/BottomWarning";
 import Button from "../components/Button";
 import Heading from "../components/Heading";
@@ -6,6 +7,7 @@ import InputBox from "../components/InputBox";
 import SubHeading from "../components/SubHeading";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContextProvider";
 
 const SignUp = () => {
   const [firstName, setFirstName] = useState("");
@@ -13,6 +15,8 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  const { setUser } = React.useContext(UserContext);
 
   return (
     <div className="bg-slate-300 h-screen flex justify-center">
@@ -60,6 +64,13 @@ const SignUp = () => {
                     password,
                   }
                 );
+
+                setUser({
+                  email: username,
+                  firstName,
+                  lastName,
+                  isAuthenticated: true,
+                });
                 localStorage.setItem("token", response.data.data.token);
                 navigate("/dashboard");
               }}
